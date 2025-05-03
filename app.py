@@ -207,7 +207,7 @@ except NameError:
 
 # Sample filenames expected in the script's directory
 sample_pairs = [
-    ("blurred_0_000000.png", "sharp_0_000000.png"),
+    ("blurred_0_000009.png", "sharp_0_000009.png"),
     ("blurred_0_000005.png", "sharp_0_000005.png"),
     ("blurred_0_000010.png", "sharp_0_000010.png"),
 ]
