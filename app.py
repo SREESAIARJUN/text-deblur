@@ -10,7 +10,7 @@ from pathlib import Path
 
 # --- Configuration ---
 TARGET_SIZE = (256, 256)
-SAMPLE_IMG_DIR = "samples" # Directory where sample images are stored
+SAMPLE_IMG_DIR = "." # Directory where sample images are stored
 SAMPLE_IMG_WIDTH = 150    # Display width for sample images in Streamlit
 
 # --- Model Loading ---
