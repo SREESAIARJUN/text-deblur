@@ -186,58 +186,83 @@ st.markdown("---")
 st.subheader("Examples")
 st.write("Sample blurred images and their corresponding sharp (ground truth) versions:")
 
-# Sample filenames expected in the root directory
+# --- Get the directory where the script is located ---
+# This makes the path finding independent of the current working directory
+try:
+    # The standard way to get the script's directory
+    script_dir = Path(__file__).parent.resolve()
+except NameError:
+    # Fallback if __file__ is not defined (e.g., interactive environment, though less likely with streamlit run)
+    script_dir = Path.cwd()
+    st.warning(f"Could not determine script directory reliably, using current working directory: {script_dir}. Ensure you run streamlit from the script's directory.", icon="⚠️")
+
+# --- Add Debugging Info (Optional - uncomment to see) ---
+# st.write(f"Script directory detected as: `{script_dir}`")
+# try:
+#     st.write(f"Files found in script directory: `{os.listdir(script_dir)}`")
+# except Exception as e:
+#     st.write(f"Could not list files in script directory: {e}")
+# --- End Debugging Info ---
+
+
+# Sample filenames expected in the script's directory
 sample_pairs = [
     ("blurred_0_000000.png", "sharp_0_000000.png"),
     ("blurred_0_000005.png", "sharp_0_000005.png"),
     ("blurred_0_000010.png", "sharp_0_000010.png"),
 ]
 
-# Check if at least one sample image exists to avoid showing empty columns
-sample_files_exist = any(os.path.exists(f) for pair in sample_pairs for f in pair)
+# --- Check if files exist relative to the script directory ---
+sample_files_exist = any((script_dir / f).exists() for pair in sample_pairs for f in pair)
 
 if sample_files_exist and len(sample_pairs) > 0 :
-    # Create columns for sample display layout
-    cols = st.columns(len(sample_pairs) * 2) # Two columns per pair (blurred, sharp)
-
+    cols = st.columns(len(sample_pairs) * 2) # Two columns per pair
     col_index = 0
     for blurred_fname, sharp_fname in sample_pairs:
-        # Paths are just the filenames since they are in the root dir
-        blurred_path = blurred_fname
-        sharp_path = sharp_fname
+        # --- Construct full paths relative to the script directory ---
+        blurred_path = script_dir / blurred_fname
+        sharp_path = script_dir / sharp_fname
+        # --- End Path Construction Change ---
+
+        # --- Debugging paths being checked (Optional - uncomment) ---
+        # st.write(f"Checking for blurred: {blurred_path}")
+        # st.write(f"Checking for sharp: {sharp_path}")
+        # --- End Debugging ---
 
         # Display Blurred Sample
         with cols[col_index]:
             st.markdown(f"**Blurred**")
-            if os.path.exists(blurred_path):
+            # Use the Path object's exists() method
+            if blurred_path.exists():
                 try:
+                    # Open using the full path
                     img_blurred = Image.open(blurred_path)
                     st.image(img_blurred, caption=f"{blurred_fname}", use_container_width=True)
                 except Exception as e:
                     st.warning(f"Cannot load {blurred_fname}: {e}", icon="⚠️")
-                    logging.warning(f"Cannot load sample {blurred_fname}: {e}")
+                    logging.warning(f"Cannot load sample {blurred_fname} from {blurred_path}: {e}")
             else:
-                st.caption(f"{blurred_fname}\n(not found)")
+                st.caption(f"{blurred_fname}\n(not found at\n{blurred_path})") # Show path if not found
         col_index += 1
 
         # Display Sharp Sample
         with cols[col_index]:
             st.markdown(f"**Sharp (GT)**")
-            if os.path.exists(sharp_path):
+            # Use the Path object's exists() method
+            if sharp_path.exists():
                 try:
+                     # Open using the full path
                     img_sharp = Image.open(sharp_path)
                     st.image(img_sharp, caption=f"{sharp_fname}", use_container_width=True)
                 except Exception as e:
                     st.warning(f"Cannot load {sharp_fname}: {e}", icon="⚠️")
-                    logging.warning(f"Cannot load sample {sharp_fname}: {e}")
-
+                    logging.warning(f"Cannot load sample {sharp_fname} from {sharp_path}: {e}")
             else:
-                st.caption(f"{sharp_fname}\n(not found)")
+                st.caption(f"{sharp_fname}\n(not found at\n{sharp_path})") # Show path if not found
         col_index += 1
 elif len(sample_pairs) > 0:
-    st.info("Could not find the sample image files in the application's root directory.")
-    logging.info("Sample image files not found in root directory.")
-
+    st.warning(f"Could not find any of the sample image files in the script's directory: {script_dir}", icon="⚠️")
+    logging.warning(f"Sample image files not found in script directory: {script_dir}")
 
 # --- Main Application Logic ---
 st.markdown("---")
