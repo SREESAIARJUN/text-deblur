@@ -66,13 +66,13 @@ uploaded_file = st.file_uploader("Choose a blurred image...", type=["png", "jpg"
 
 if uploaded_file:
     pil_blurred = Image.open(uploaded_file)
-    st.image(pil_blurred, caption="Uploaded Blurred Image", use_column_width='auto')
+    st.image(pil_blurred, caption="Uploaded Blurred Image", use_container_width='auto')
 
     input_arr = preprocess_image(pil_blurred)
     pred = model.predict(input_arr)
     pil_deblurred = postprocess_image(pred)
 
-    st.image(pil_deblurred, caption="Deblurred Output", use_column_width='auto')
+    st.image(pil_deblurred, caption="Deblurred Output", use_container_width='auto')
 
     st.markdown("### Comparison")
     col1, col2 = st.columns(2)
