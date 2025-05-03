@@ -208,6 +208,7 @@ except NameError:
 # Sample filenames expected in the script's directory
 sample_pairs = [
     ("blurred_0_000009.png", "sharp_0_000009.png"),
+    ("blurred_0_000004.png", "sharp_0_000004.png"),
 ]
 
 # --- Check if files exist relative to the script directory ---
